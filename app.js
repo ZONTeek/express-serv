@@ -2,13 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const app = express();
-require('dotenv/config')
+const cors = require('cors');
+require('dotenv/config');
 
-app.use(bodyParser.json());
 
-const studentsRoute = require("./routes/students");
-app.use("/students", studentsRoute);
+app.use(bodyParser.json(), cors());
 
-mongoose.connect(process.env.DB_CONNECTION, {useUnifiedTopology: true, useNewUrlParser: true}, 
-()=>console.log("connected"));
+const dayRoute = require("./routes/dayRoute");
+app.use("/", dayRoute);
+
+mongoose.connect(process.env.DB_CONNECTION, { useUnifiedTopology: true, useNewUrlParser: true, useFindAndModify: false },
+  () => console.log("connected"));
 app.listen(3001)
+mongoose.Promise = global.Promise;
+var db = mongoose.connection;
+db.on("error", console.error.bind(console, 'MongoDB connection error:'))
